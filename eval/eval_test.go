@@ -14,10 +14,17 @@ func TestKotoba_Eval(t *testing.T) {
 		wantErr error
 	}{
 		{
-			name:    "string",
+			name:    "integer",
 			k:       &Kotoba{},
 			args:    args{expr: `1`},
 			want:    `1`,
+			wantErr: nil,
+		},
+		{
+			name:    "string",
+			k:       &Kotoba{},
+			args:    args{expr: `"hello"`},
+			want:    `hello`,
 			wantErr: nil,
 		},
 	}
@@ -26,7 +33,7 @@ func TestKotoba_Eval(t *testing.T) {
 			k := &Kotoba{}
 			got, err := k.Eval(tt.args.expr)
 			if err != tt.wantErr {
-				t.Errorf("Kotoba.Eval() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("Kotoba.Eval() %q %v, wantErr %v", tt.name, err, tt.wantErr)
 				return
 			}
 			if got != tt.want {
