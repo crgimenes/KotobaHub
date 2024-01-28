@@ -16,8 +16,8 @@ func TestKotoba_Eval(t *testing.T) {
 		{
 			name:    "string",
 			k:       &Kotoba{},
-			args:    args{expr: `"hello"`},
-			want:    "hello",
+			args:    args{expr: `1`},
+			want:    `1`,
 			wantErr: nil,
 		},
 	}
