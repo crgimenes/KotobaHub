@@ -77,6 +77,20 @@ func TestKotoba_Eval(t *testing.T) {
 			want:    2,
 			wantErr: nil,
 		},
+		{
+			name:    "multi",
+			k:       &Kotoba{},
+			args:    args{expr: []any{`*`, 2, 3}},
+			want:    6,
+			wantErr: nil,
+		},
+		{
+			name:    "div",
+			k:       &Kotoba{},
+			args:    args{expr: []any{`/`, 6, 3}},
+			want:    2,
+			wantErr: nil,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

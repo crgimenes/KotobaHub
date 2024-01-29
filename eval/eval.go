@@ -59,10 +59,14 @@ func (k *Kotoba) Eval(expr ...any) (any, error) {
 		return "", ERR_INVALID_EXPR
 	}
 
+	var err error
 	for i := 0; i < len(expr); i++ {
 		switch expr[i].(type) {
 		case []any:
-			expr[i], _ = k.Eval(expr[i].([]any)...)
+			expr[i], err = k.Eval(expr[i].([]any)...)
+			if err != nil {
+				return nil, err
+			}
 		}
 	}
 
@@ -79,7 +83,9 @@ func (k *Kotoba) Eval(expr ...any) (any, error) {
 	if len(expr) == 3 {
 		if expr[0] == "+" {
 			if isInt(expr[1]) && isInt(expr[2]) {
-				return expr[1].(int) + expr[2].(int), nil
+				l := expr[1].(int)
+				r := expr[2].(int)
+				return l + r, nil
 			}
 			if isString(expr[1]) && isString(expr[2]) {
 				return (expr[1].(string)[1:len(expr[1].(string))-1] + expr[2].(string)[1:len(expr[2].(string))-1]), nil
@@ -88,7 +94,25 @@ func (k *Kotoba) Eval(expr ...any) (any, error) {
 		}
 		if expr[0] == "-" {
 			if isInt(expr[1]) && isInt(expr[2]) {
-				return expr[1].(int) - expr[2].(int), nil
+				l := expr[1].(int)
+				r := expr[2].(int)
+				return l - r, nil
+			}
+			return nil, ERR_INVALID_EXPR
+		}
+		if expr[0] == "*" {
+			if isInt(expr[1]) && isInt(expr[2]) {
+				l := expr[1].(int)
+				r := expr[2].(int)
+				return l * r, nil
+			}
+			return nil, ERR_INVALID_EXPR
+		}
+		if expr[0] == "/" {
+			if isInt(expr[1]) && isInt(expr[2]) {
+				l := expr[1].(int)
+				r := expr[2].(int)
+				return l / r, nil
 			}
 			return nil, ERR_INVALID_EXPR
 		}
