@@ -91,6 +91,13 @@ func TestKotoba_Eval(t *testing.T) {
 			want:    2,
 			wantErr: nil,
 		},
+		{
+			name:    "divide by zero",
+			k:       &Kotoba{},
+			args:    args{expr: []any{`/`, 6, 0}},
+			want:    nil,
+			wantErr: ERR_DIV_BY_ZERO,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

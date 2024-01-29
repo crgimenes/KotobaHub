@@ -9,6 +9,7 @@ type Kotoba struct{}
 var (
 	ERR_NOT_IMPLEMENTED = errors.New("Not implemented")
 	ERR_INVALID_EXPR    = errors.New("Invalid expression")
+	ERR_DIV_BY_ZERO     = errors.New("Division by zero")
 )
 
 func isInt(expr any) bool {
@@ -112,6 +113,9 @@ func (k *Kotoba) Eval(expr ...any) (any, error) {
 			if isInt(expr[1]) && isInt(expr[2]) {
 				l := expr[1].(int)
 				r := expr[2].(int)
+				if r == 0 {
+					return nil, ERR_DIV_BY_ZERO
+				}
 				return l / r, nil
 			}
 			return nil, ERR_INVALID_EXPR
