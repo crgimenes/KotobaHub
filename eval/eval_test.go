@@ -35,10 +35,46 @@ func TestKotoba_Eval(t *testing.T) {
 			wantErr: nil,
 		},
 		{
+			name:    "sub",
+			k:       &Kotoba{},
+			args:    args{expr: []any{`-`, 1, 2}},
+			want:    -1,
+			wantErr: nil,
+		},
+		{
 			name:    "concat",
 			k:       &Kotoba{},
 			args:    args{expr: []any{`+`, `"hello"`, `"world"`}},
 			want:    `helloworld`,
+			wantErr: nil,
+		},
+
+		{
+			name:    "nested add",
+			k:       &Kotoba{},
+			args:    args{expr: []any{`+`, 1, []any{`+`, 2, 3}}},
+			want:    6,
+			wantErr: nil,
+		},
+		{
+			name:    "nested add 2",
+			k:       &Kotoba{},
+			args:    args{expr: []any{`+`, []any{`+`, 1, 2}, 3}},
+			want:    6,
+			wantErr: nil,
+		},
+		{
+			name:    "nested add 3",
+			k:       &Kotoba{},
+			args:    args{expr: []any{`+`, []any{`+`, 1, 2}, []any{`+`, 3, 4}}},
+			want:    10,
+			wantErr: nil,
+		},
+		{
+			name:    "nested sub",
+			k:       &Kotoba{},
+			args:    args{expr: []any{`-`, 1, []any{`-`, 2, 3}}},
+			want:    2,
 			wantErr: nil,
 		},
 	}

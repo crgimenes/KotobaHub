@@ -59,7 +59,14 @@ func (k *Kotoba) Eval(expr ...any) (any, error) {
 		return "", ERR_INVALID_EXPR
 	}
 
-	//fmt.Printf("expr: %T %q\n", expr, expr)
+	for i := 0; i < len(expr); i++ {
+		switch expr[i].(type) {
+		case []any:
+			expr[i], _ = k.Eval(expr[i].([]any)...)
+		}
+	}
+
+	//	fmt.Printf("expr: %T %q\n", expr, expr)
 	if len(expr) == 1 {
 		if isInt(expr[0]) {
 			return expr[0], nil
@@ -77,9 +84,15 @@ func (k *Kotoba) Eval(expr ...any) (any, error) {
 			if isString(expr[1]) && isString(expr[2]) {
 				return (expr[1].(string)[1:len(expr[1].(string))-1] + expr[2].(string)[1:len(expr[2].(string))-1]), nil
 			}
-			return "", ERR_INVALID_EXPR
+			return nil, ERR_INVALID_EXPR
+		}
+		if expr[0] == "-" {
+			if isInt(expr[1]) && isInt(expr[2]) {
+				return expr[1].(int) - expr[2].(int), nil
+			}
+			return nil, ERR_INVALID_EXPR
 		}
 	}
 
-	return "", ERR_NOT_IMPLEMENTED
+	return nil, ERR_NOT_IMPLEMENTED
 }
