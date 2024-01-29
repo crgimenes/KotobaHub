@@ -4,20 +4,20 @@ import "testing"
 
 func TestKotoba_Eval(t *testing.T) {
 	type args struct {
-		expr string
+		expr any
 	}
 	tests := []struct {
 		name    string
 		k       *Kotoba
 		args    args
-		want    string
+		want    any
 		wantErr error
 	}{
 		{
 			name:    "integer",
 			k:       &Kotoba{},
-			args:    args{expr: `1`},
-			want:    `1`,
+			args:    args{expr: 1},
+			want:    1,
 			wantErr: nil,
 		},
 		{
