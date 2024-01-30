@@ -71,6 +71,26 @@ func TestKotoba_Eval(t *testing.T) {
 			wantErr: nil,
 		},
 		{
+			name:    "nested add 4",
+			k:       &Kotoba{},
+			args:    args{expr: []any{`+`, []any{`+`, 1, 2}, []any{`+`, 3, []any{`+`, 4, []any{`+`, 5, 6}}}}},
+			want:    21,
+			wantErr: nil,
+		},
+		{
+			name: "nested add 5",
+			k:    &Kotoba{},
+			args: args{
+				expr: []any{
+					`+`,
+					[]any{`+`,
+						[]any{`+`,
+							[]any{`+`, 1, 2},
+							[]any{`+`, 3, 4}},
+						[]any{`+`, 5, 6}}}},
+			want: 21,
+		},
+		{
 			name:    "nested sub",
 			k:       &Kotoba{},
 			args:    args{expr: []any{`-`, 1, []any{`-`, 2, 3}}},
@@ -98,11 +118,32 @@ func TestKotoba_Eval(t *testing.T) {
 			want:    nil,
 			wantErr: ERR_DIV_BY_ZERO,
 		},
+		{
+			name:    "set variable",
+			k:       &Kotoba{},
+			args:    args{expr: []any{`set`, `x`, 1}},
+			want:    1,
+			wantErr: nil,
+		},
+		{
+			name:    "get variable",
+			k:       &Kotoba{},
+			args:    args{expr: []any{`get`, `true`}},
+			want:    true,
+			wantErr: nil,
+		},
+		{
+			name:    "variable not found",
+			k:       &Kotoba{},
+			args:    args{expr: []any{`get`, `x`}},
+			want:    nil,
+			wantErr: ERR_VARIABLE_NOT_FOUND,
+		},
 	}
 	for _, tt := range tests {
+		k := New()
 		t.Run(tt.name, func(t *testing.T) {
-			k := &Kotoba{}
-			got, err := k.Eval(tt.args.expr...)
+			got, err := k.Eval(nil, tt.args.expr...)
 			if err != tt.wantErr {
 				t.Errorf("Kotoba.Eval() %q %v, wantErr %v", tt.name, err, tt.wantErr)
 				return

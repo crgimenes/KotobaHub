@@ -2,15 +2,25 @@ package eval
 
 import (
 	"errors"
+	"kotoba/environment"
 )
 
-type Kotoba struct{}
+type Kotoba struct {
+	Global *environment.Environment
+}
 
 var (
-	ERR_NOT_IMPLEMENTED = errors.New("Not implemented")
-	ERR_INVALID_EXPR    = errors.New("Invalid expression")
-	ERR_DIV_BY_ZERO     = errors.New("Division by zero")
+	ERR_NOT_IMPLEMENTED    = errors.New("Not implemented")
+	ERR_INVALID_EXPR       = errors.New("Invalid expression")
+	ERR_DIV_BY_ZERO        = errors.New("Division by zero")
+	ERR_VARIABLE_NOT_FOUND = errors.New("Variable not found")
 )
+
+func New() *Kotoba {
+	return &Kotoba{
+		Global: environment.New(nil),
+	}
+}
 
 func isInt(expr any) bool {
 	switch expr.(type) {
@@ -55,7 +65,13 @@ func isString(expr any) bool {
 	}
 }
 
-func (k *Kotoba) Eval(expr ...any) (any, error) {
+func (k *Kotoba) Eval(parentEnv *environment.Environment, expr ...any) (any, error) {
+	if parentEnv == nil {
+		parentEnv = k.Global
+	}
+
+	env := environment.New(parentEnv)
+
 	if len(expr) == 0 {
 		return "", ERR_INVALID_EXPR
 	}
@@ -64,14 +80,13 @@ func (k *Kotoba) Eval(expr ...any) (any, error) {
 	for i := 0; i < len(expr); i++ {
 		switch expr[i].(type) {
 		case []any:
-			expr[i], err = k.Eval(expr[i].([]any)...)
+			expr[i], err = k.Eval(parentEnv, expr[i].([]any)...)
 			if err != nil {
 				return nil, err
 			}
 		}
 	}
 
-	//	fmt.Printf("expr: %T %q\n", expr, expr)
 	if len(expr) == 1 {
 		if isInt(expr[0]) {
 			return expr[0], nil
@@ -81,7 +96,33 @@ func (k *Kotoba) Eval(expr ...any) (any, error) {
 			return s[1 : len(s)-1], nil
 		}
 	}
+
+	if len(expr) == 2 {
+		if expr[0] == `+` {
+			if isInt(expr[1]) {
+				v := expr[1].(int)
+				return +v, nil
+			}
+			if isString(expr[1]) {
+				s := expr[1].(string)
+				return s[1 : len(s)-1], nil
+			}
+		}
+		if expr[0] == "get" {
+			v, ok := env.Get(expr[1].(string))
+			if !ok {
+				return nil, ERR_VARIABLE_NOT_FOUND
+			}
+			return v, nil
+		}
+	}
+
 	if len(expr) == 3 {
+		if expr[0] == "set" {
+			env.Set(expr[1].(string), expr[2])
+			return expr[2], nil
+		}
+
 		if expr[0] == "+" {
 			if isInt(expr[1]) && isInt(expr[2]) {
 				l := expr[1].(int)
