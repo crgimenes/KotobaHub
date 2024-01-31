@@ -118,27 +118,6 @@ func TestKotoba_Eval(t *testing.T) {
 			want:    nil,
 			wantErr: ERR_DIV_BY_ZERO,
 		},
-		{
-			name:    "set variable",
-			k:       &Kotoba{},
-			args:    args{expr: []any{`set`, `x`, 1}},
-			want:    1,
-			wantErr: nil,
-		},
-		{
-			name:    "get variable",
-			k:       &Kotoba{},
-			args:    args{expr: []any{`get`, `true`}},
-			want:    true,
-			wantErr: nil,
-		},
-		{
-			name:    "variable not found",
-			k:       &Kotoba{},
-			args:    args{expr: []any{`get`, `x`}},
-			want:    nil,
-			wantErr: ERR_VARIABLE_NOT_FOUND,
-		},
 	}
 	for _, tt := range tests {
 		k := New()

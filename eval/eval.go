@@ -66,16 +66,6 @@ func isString(expr any) bool {
 }
 
 func (k *Kotoba) Eval(parentEnv *environment.Environment, expr ...any) (any, error) {
-	if parentEnv == nil {
-		parentEnv = k.Global
-	}
-
-	env := environment.New(parentEnv)
-
-	if len(expr) == 0 {
-		return "", ERR_INVALID_EXPR
-	}
-
 	var err error
 	for i := 0; i < len(expr); i++ {
 		switch expr[i].(type) {
@@ -108,21 +98,9 @@ func (k *Kotoba) Eval(parentEnv *environment.Environment, expr ...any) (any, err
 				return s[1 : len(s)-1], nil
 			}
 		}
-		if expr[0] == "get" {
-			v, ok := env.Get(expr[1].(string))
-			if !ok {
-				return nil, ERR_VARIABLE_NOT_FOUND
-			}
-			return v, nil
-		}
 	}
 
 	if len(expr) == 3 {
-		if expr[0] == "set" {
-			env.Set(expr[1].(string), expr[2])
-			return expr[2], nil
-		}
-
 		if expr[0] == "+" {
 			if isInt(expr[1]) && isInt(expr[2]) {
 				l := expr[1].(int)
