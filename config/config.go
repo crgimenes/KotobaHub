@@ -11,13 +11,11 @@ var (
 	CFG = &Config{}
 )
 
-func New() *Config {
-	CFG.DBPath = "data.db"
+func Load() {
+	CFG.DBPath = "file:data.db?mode=rwc&_journal_mode=WAL&_busy_timeout=10000`"
 
 	flag.StringVar(&CFG.DBPath, "db", CFG.DBPath, "Path to the database file")
 	flag.BoolVar(&CFG.Debug, "debug", false, "Enable debug mode")
 
 	flag.Parse()
-
-	return CFG
 }
