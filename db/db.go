@@ -26,7 +26,9 @@ func Open() error {
 		db: db,
 	}
 
-	return nil
+	err = runMigration()
+
+	return err
 }
 
 func (d *Database) Close() error {
