@@ -2,18 +2,23 @@ package main
 
 import (
 	"KotobaHub/config"
+	"KotobaHub/db"
 	"log"
 )
 
 func main() {
-	cfg := config.New()
+	config.Load()
 	log.Println("Starting KotobaHub")
 
-	if cfg.Debug {
+	if config.CFG.Debug {
 		log.Println("Debug mode enabled")
 		log.SetFlags(log.LstdFlags | log.Lshortfile)
 	}
 
-	log.Println("Database:", cfg.DBPath)
+	err := db.Open()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
 
 }
