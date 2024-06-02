@@ -1,9 +1,10 @@
 package main
 
 import (
+	"log"
+
 	"KotobaHub/config"
 	"KotobaHub/db"
-	"log"
 )
 
 func main() {
