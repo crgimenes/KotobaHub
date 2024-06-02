@@ -1,7 +1,7 @@
 package session
 
 import (
-	"crypto/rand"
+	"KotobaHub/util"
 	"log"
 	"net/http"
 	"strconv"
@@ -77,7 +77,7 @@ func Save(r *http.Request, w http.ResponseWriter) (id string) {
 	expireAt := time.Now().Add(3 * time.Hour)
 	id, s, ok := get(r)
 	if !ok {
-		id = RandomID()
+		id = util.RandomID()
 		s = &sessionData{
 			expireAt: expireAt,
 			data:     make(map[string]any),
@@ -148,18 +148,4 @@ func removeExpired() {
 			delete(sessionDataMap, k)
 		}
 	}
-}
-
-func RandomID() string {
-	const (
-		length  = 16
-		charset = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
-	)
-	lenCharset := byte(len(charset))
-	b := make([]byte, length)
-	rand.Read(b)
-	for i := 0; i < length; i++ {
-		b[i] = charset[b[i]%lenCharset]
-	}
-	return string(b)
 }
