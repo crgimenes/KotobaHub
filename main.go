@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"KotobaHub/config"
+	"KotobaHub/session"
 )
 
 //go:embed assets/*
@@ -17,6 +18,13 @@ func handlerAssets(w http.ResponseWriter, r *http.Request) {
 
 func handlerHelthCheck(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(`{"status": "ok"}`))
+}
+
+func handlerMain(w http.ResponseWriter, r *http.Request) {
+	sid := session.Save(r, w)
+	log.Println("Session ID:", sid)
+
+	w.Write([]byte("Hello, KotobaHub!"))
 }
 
 func main() {
@@ -35,10 +43,14 @@ func main() {
 		}
 		defer db.Close()
 	*/
+
+	session.Load()
+
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("/healthcheck", handlerHelthCheck)
 	mux.HandleFunc("/assets/", handlerAssets)
+	mux.HandleFunc("/", handlerMain)
 
 	log.Println("Listening on", config.CFG.ListemAddress)
 	err := http.ListenAndServe(config.CFG.ListemAddress, mux)
