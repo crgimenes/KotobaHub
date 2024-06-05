@@ -3,8 +3,9 @@ package config
 import "flag"
 
 type Config struct {
-	DBPath string // Path to the database file
-	Debug  bool   // Enable debug mode
+	ListemAddress string // Address to listen on
+	DBPath        string // Path to the database file
+	Debug         bool   // Enable debug mode
 }
 
 var (
@@ -16,6 +17,7 @@ func Load() {
 
 	flag.StringVar(&CFG.DBPath, "db", CFG.DBPath, "Path to the database file")
 	flag.BoolVar(&CFG.Debug, "debug", false, "Enable debug mode")
+	flag.StringVar(&CFG.ListemAddress, "listen", ":8080", "Address to listen on")
 
 	flag.Parse()
 }

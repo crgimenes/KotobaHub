@@ -2,10 +2,19 @@ package main
 
 import (
 	"log"
+	"net/http"
 
 	"KotobaHub/config"
 	"KotobaHub/db"
 )
+
+func handlerMain(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("Hello, World!"))
+}
+
+func handlerHelthCheck(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte(`{"status": "ok"}`))
+}
 
 func main() {
 	config.Load()
@@ -22,4 +31,14 @@ func main() {
 	}
 	defer db.Close()
 
+	mux := http.NewServeMux()
+
+	mux.HandleFunc("/", handlerMain)
+	mux.HandleFunc("/healthcheck", handlerHelthCheck)
+
+	log.Println("Listening on", config.CFG.ListemAddress)
+	err = http.ListenAndServe(config.CFG.ListemAddress, mux)
+	if err != nil {
+		log.Fatal("ListenAndServe: ", err)
+	}
 }
