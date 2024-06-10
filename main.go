@@ -2,6 +2,7 @@ package main
 
 import (
 	"embed"
+	"html/template"
 	"log"
 	"net/http"
 
@@ -11,6 +12,9 @@ import (
 
 //go:embed assets/*
 var assets embed.FS
+
+//go:embed templates/*
+var tpltfs embed.FS
 
 func handlerAssets(w http.ResponseWriter, r *http.Request) {
 	http.FileServer(http.FS(assets)).ServeHTTP(w, r)
@@ -34,7 +38,21 @@ func handlerMain(w http.ResponseWriter, r *http.Request) {
 	sid := session.Save(r, w)
 	log.Println("Session ID:", sid)
 
-	w.Write([]byte("Hello, KotobaHub!"))
+	tplt, err := template.ParseFS(tpltfs, "templates/index.html")
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "text/html")
+
+	err = tplt.Execute(w, nil)
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
 }
 
 func main() {
