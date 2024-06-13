@@ -1,6 +1,7 @@
 package session
 
 import (
+	"KotobaHub/sillyname"
 	"KotobaHub/util"
 	"log"
 	"net/http"
@@ -82,6 +83,7 @@ func Save(r *http.Request, w http.ResponseWriter) (id string) {
 			expireAt: expireAt,
 			data:     make(map[string]any),
 		}
+		s.data["nickname"] = sillyname.Generate()
 	}
 
 	cookie := &http.Cookie{
