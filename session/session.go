@@ -103,7 +103,7 @@ func Save(r *http.Request, w http.ResponseWriter) (id string) {
 	return id
 }
 
-func Get(id string) any {
+func Get(id string) map[string]any {
 	mux.Lock()
 	d := sessionDataMap[id]
 	mux.Unlock()
@@ -120,8 +120,13 @@ func Set(id string, key string, value any) {
 }
 
 func GetString(id string, key string) string {
-	s := Get(id)
-	if s == nil {
+	m := Get(id)
+	if m == nil {
+		return ""
+	}
+
+	s, ok := m[key]
+	if !ok {
 		return ""
 	}
 

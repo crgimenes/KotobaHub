@@ -38,6 +38,11 @@ func handlerMain(w http.ResponseWriter, r *http.Request) {
 	sid := session.Save(r, w)
 	log.Println("Session ID:", sid)
 
+	s := session.Get(sid)
+	for k, v := range s {
+		log.Println(k, v)
+	}
+
 	tplt, err := template.ParseFS(tpltfs, "templates/index.html")
 	if err != nil {
 		log.Println(err)
