@@ -43,7 +43,12 @@ func handlerMain(w http.ResponseWriter, r *http.Request) {
 		log.Println(k, v)
 	}
 
-	tplt, err := template.ParseFS(tpltfs, "templates/index.html")
+	tplt, err := template.ParseFS(tpltfs,
+		"templates/index.html",
+		"templates/head.html",
+		"templates/header.html",
+		"templates/footer.html",
+	)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
