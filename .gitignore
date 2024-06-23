@@ -23,3 +23,6 @@ go.work
 # Database file
 data.db
 
+# Non free material
+nonfree
+
