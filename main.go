@@ -17,6 +17,18 @@ var assets embed.FS
 var tpltfs embed.FS
 
 func handlerAssets(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		log.Println("Method not allowed")
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	if r.URL.Path == "/assets/" || r.URL.Path == "/assets" {
+		log.Println("Redirecting to /")
+		http.Redirect(w, r, "/", http.StatusMovedPermanently)
+		return
+	}
+
 	http.FileServer(http.FS(assets)).ServeHTTP(w, r)
 }
 
